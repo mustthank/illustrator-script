@@ -1,0 +1,19 @@
+var win1 = new Window("palette", undefined, undefined, {independent: true, closeButton: false, borderless: true});
+
+win1.pnl = win1.add("panel", [10, 10, 440, 100], "Processing Image");
+win1.enabled = true;
+win1.pnl.progBar = win1.pnl.add("progressbar", [20, 35, 410, 60], 0, 100);
+
+win1.pnl.progBarLabel = win1.pnl.add("statictext", [20, 20, 320, 35], "0%");
+win1.show();
+// win1.on();
+// var doc = app.activeDocument;
+// doc.active();
+// alert("OK")
+while (win1.pnl.progBar.value < win1.pnl.progBar.maxvalue) {
+    win1.pnl.progBar.value++;
+    win1.pnl.progBarLabel.text = win1.pnl.progBar.value + "%";
+    $.sleep(10);
+    win1.update();
+}
+win1.close();
