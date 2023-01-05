@@ -2,7 +2,9 @@
 Code for Import https://scriptui.joonas.me — (Triple click to select): 
 {"items":{"item-0":{"id":0,"type":"Dialog","parentId":false,"style":{"enabled":true,"varName":null,"windowType":"Dialog","creationProps":{"su1PanelCoordinates":false,"maximizeButton":false,"minimizeButton":false,"independent":false,"closeButton":true,"borderless":false,"resizeable":false},"text":"Dialog","preferredSize":[0,0],"margins":16,"orientation":"column","spacing":10,"alignChildren":["center","top"]}},"item-6":{"id":6,"type":"Button","parentId":10,"style":{"enabled":true,"varName":"applyButton","text":"OK","justify":"center","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-7":{"id":7,"type":"Slider","parentId":9,"style":{"enabled":true,"varName":"scaleSlider","preferredSize":[198,0],"alignment":"fill","helpTip":null}},"item-8":{"id":8,"type":"StaticText","parentId":9,"style":{"enabled":true,"varName":null,"creationProps":{"truncate":"none","multiline":false,"scrolling":true},"softWrap":false,"text":"%","justify":"left","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-9":{"id":9,"type":"Group","parentId":14,"style":{"enabled":true,"varName":null,"preferredSize":[0,0],"margins":0,"orientation":"row","spacing":10,"alignChildren":["left","center"],"alignment":null}},"item-10":{"id":10,"type":"Group","parentId":0,"style":{"enabled":true,"varName":null,"preferredSize":[0,0],"margins":0,"orientation":"row","spacing":14,"alignChildren":["center","center"],"alignment":null}},"item-11":{"id":11,"type":"Checkbox","parentId":10,"style":{"enabled":true,"varName":"previewChk","text":"Preview","preferredSize":[165,0],"alignment":null,"helpTip":null}},"item-12":{"id":12,"type":"Button","parentId":10,"style":{"enabled":true,"varName":"cancelButton","text":"Cancel","justify":"center","preferredSize":[0,0],"alignment":null,"helpTip":null}},"item-13":{"id":13,"type":"EditText","parentId":9,"style":{"enabled":true,"varName":"scaleText","creationProps":{"noecho":false,"readonly":false,"multiline":false,"scrollable":false,"borderless":false,"enterKeySignalsOnChange":false},"softWrap":false,"text":"1000","justify":"left","preferredSize":[0,0],"alignment":"fill","helpTip":null}},"item-14":{"id":14,"type":"Panel","parentId":0,"style":{"enabled":true,"varName":null,"creationProps":{"borderStyle":"etched","su1PanelCoordinates":false},"text":"Scale Stroke Width","preferredSize":[0,0],"margins":10,"orientation":"column","spacing":10,"alignChildren":["fill","top"],"alignment":"fill"}}},"order":[0,14,9,7,13,8,10,11,12,6],"settings":{"importJSON":true,"indentSize":false,"cepExport":false,"includeCSSJS":true,"showDialog":true,"functionWrapper":false,"afterEffectsDockable":false,"itemReferenceList":"None"},"activeId":10}
 */
-
+var doc = activeDocument;
+var selectedItems =parseInt(doc.selection.length, 10) || 0;
+if (app.documents.length > 0 && selectedItems > 0) {
 // DIALOG
 // ======
 var isUndo = false;
@@ -38,7 +40,7 @@ group1.margins = 0;
 var scaleSlider = group1.add("slider", undefined, undefined, undefined, undefined, {
     name: "scaleSlider"
 });
-scaleSlider.minvalue = 50;
+scaleSlider.minvalue = 10;
 scaleSlider.maxvalue = 1000;
 scaleSlider.value = 100;
 scaleSlider.preferredSize.width = 250;
@@ -51,7 +53,11 @@ scaleSlider.onChanging = function() {
 var scaleText = group1.add('edittext {properties: {name: "scaleText"}}');
 scaleText.text = "100";
 scaleText.alignment = ["fill", "fill"];
-
+scaleText.addEventListener('changing', function () {
+    scaleSlider.value = Math.round(this.text);
+    // scaleText.text = Math.round(this.text);
+    previewStart();
+});
 var statictext1 = group1.add("statictext", undefined, undefined, {
     name: "statictext1",
     scrolling: true
@@ -85,12 +91,11 @@ var applyButton = group2.add("button", undefined, undefined, {
 });
 applyButton.text = "OK";
 applyButton.onClick = function() {
-    if (preview.value && isUndo) {
+    if (previewChk.value && isUndo) {
         isUndo = false;
         dialog.close();
     } else {
-        // app.undo();
-        startSpec();
+       fatStroke(scaleSlider.value)
         isUndo = false;
         dialog.close();
     }
@@ -105,12 +110,6 @@ cancelButton.onClick = function() {
 
 function fatStroke(inp) {
     if (documents.length > 0 && activeDocument.pathItems.length > 0) {
-
-
-        // inp = prompt( "Fat Val [ % ]", "" );
-
-        // if ( inp != "" ){
-
         zerocnt = 0;
         d = eval(inp) * 0.01;
 
@@ -136,28 +135,38 @@ function fatStroke(inp) {
 }
 
 function previewStart() {
-    if (previewChk.value) {
-        if (isUndo) app.undo();
-        else isUndo = true;
-
-        fatStroke(scaleSlider.value)
-        app.redraw();
-    } else if (isUndo) {
-        app.undo();
-        app.redraw();
-        isUndo = false;
+    try {
+        if (documents.length > 0 && activeDocument.pathItems.length > 0) {
+            if (previewChk.value) {
+                if (isUndo) app.undo();
+                else isUndo = true;
+        
+                fatStroke(scaleSlider.value)
+                app.redraw();
+            } else if (isUndo) {
+                app.undo();
+                app.redraw();
+                isUndo = false;
+            }
+            }
+    } catch (error) {
+        alert(error)
     }
+   
 }
 dialog.onClose = function() {
     if (isUndo) {
         app.undo();
         app.redraw();
         isUndo = false;
+    return true;
     }
 
     // selection = $items;
     // saveSettings();
-    return true;
 }
 
 dialog.show();
+} else { // No active document
+    alert("Please open a document and select at least 1 object to continue.")
+}
