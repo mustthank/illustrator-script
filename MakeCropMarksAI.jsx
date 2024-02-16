@@ -1,35 +1,35 @@
 ﻿/*
-Название: MakeCropMarksAI.jsx
-Приложение для использования: Adobe Illustrator CS3, CS4, CS5, CS6
-Версия: 1.4.16
-Язык реализации (Среда): JavaScript (ExtendScript Toolkit 2)
-Операционные системы (Платформы): PC, Macintosh (Windows, Mac OS)
-Условия распространения: Бесплатно; На Ваш риск
-Назначение: Создание меток реза
-Функциональные ограничения: Не работает с выделенными направляющими
-Примечание: Создается дополнительный файл MakeCropMarksAI.ini для хранения настроек 
-в папке с приложением Adobe Illustrator
-Техническая поддержка: Sergey-Anosov@yandex.ru
+Name: MakeCropMarksAI.jsx
+Application to use: Adobe Illustrator CS3, CS4, CS5, CS6
+Version: 1.4.16
+Implementation language (Environment): JavaScript (ExtendScript Toolkit 2)
+Operating systems (Platforms): PC, Macintosh (Windows, Mac OS)
+Distribution terms: Free; At your own risk
+Purpose: Creating cut marks
+Functional limitations: Does not work with dedicated guides
+Note: An additional MakeCropMarksAI.ini file is created to store settings
+in the folder with the Adobe Illustrator application
+Technical support: Sergey-Anosov@yandex.ru
 https://sites.google.com/site/dtpscripting
-===================================================
+===================================================== =
 Name: MakeCropMarksAI.jsx
 Application to use with: Adobe Illustrator CS3, CS4, CS5, CS6
 Version: 1.4.16
 Program language (Environment): JavaScript (ExtendScript Toolkit 2)
 Operating systems (Platforms): PC, Macintosh (Windows, Mac OS)
 Distribution conditions: Freeware; At your own risk
-Functions: Makes crop marks 
+Functions: Makes crop marks
 Functional limitations: Can not process selection containing guides
 Note: Creates an additional file MakeCropMarksAI.ini for setup data in the folder where
 the application Adobe Illustrator is.
 Technical support: Sergey-Anosov@yandex.ru
 https://sites.google.com/site/dtpscripting
 */
-// описание глобальных переменных
+// description of global variables
 //
-// название скрипта
+// script name
 var the_title = "MakeCropMarksAI";
-// версия скрипта
+// script version
 var the_version = "1.4.16";
 // активный документ
 var AD; 
@@ -2026,19 +2026,19 @@ function INI_FILE_IO( WRITE )
 	function INI_RW()
 	{
 		// длина метки по вертикали (строка)
-		LENGTH_VER_INI = VAR_RW( "LENGTH_VER_INI", LENGTH_VER_INI, STR_TYPE, "5" );// 1
+		LENGTH_VER_INI = VAR_RW( "LENGTH_VER_INI", LENGTH_VER_INI, STR_TYPE, "3" );// 1
 		// длина метки по горизонтали (строка)
-		LENGTH_HOR_INI = VAR_RW( "LENGTH_HOR_INI", LENGTH_HOR_INI, STR_TYPE, "5" );// 2
+		LENGTH_HOR_INI = VAR_RW( "LENGTH_HOR_INI", LENGTH_HOR_INI, STR_TYPE, "3" );// 2
 		// отступ метки по вертикали (строка)
-		OFFSET_VER_INI = VAR_RW( "OFFSET_VER_INI", OFFSET_VER_INI, STR_TYPE, "2" );// 3
+		OFFSET_VER_INI = VAR_RW( "OFFSET_VER_INI", OFFSET_VER_INI, STR_TYPE, "3" );// 3
 		// отступ метки по горизонтали (строка)
-		OFFSET_HOR_INI = VAR_RW( "OFFSET_HOR_INI", OFFSET_HOR_INI, STR_TYPE, "2" );// 4
+		OFFSET_HOR_INI = VAR_RW( "OFFSET_HOR_INI", OFFSET_HOR_INI, STR_TYPE, "3" );// 4
 		// вылет объекта по вертикали (строка)
 		BLEED_VER_INI = VAR_RW( "BLEED_VER_INI",  BLEED_VER_INI, STR_TYPE, "0" );// 5
 		// вылет объекта по горизонтали (строка)
 		BLEED_HOR_INI = VAR_RW( "BLEED_HOR_INI", BLEED_HOR_INI, STR_TYPE, "0" );// 6
 		// числовое значение толщины метки (строка)
-		SW_NUM_INI = VAR_RW( "SW_NUM_INI", SW_NUM_INI, STR_TYPE, "0.25" );// 7
+		SW_NUM_INI = VAR_RW( "SW_NUM_INI", SW_NUM_INI, STR_TYPE, "0.75" );// 7
 		// единицы измерения для толщины метки (индекс, число)
 		SW_UN_INI = VAR_RW( "SW_UN_INI", SW_UN_INI, INT_TYPE, 2 );// 8
 		// построение белого контура (логическое значение)
@@ -2046,7 +2046,7 @@ function INI_FILE_IO( WRITE )
 		// границы объектов (индекс, число)
 		BOUNDS_INI = VAR_RW( "BOUNDS_INI", BOUNDS_INI, INT_TYPE, 0 );// 10
 		// группировка после построения меток (индекс, число)
-		G_M_INI = VAR_RW( "G_M_INI", G_M_INI, INT_TYPE, 0 );// 11
+		G_M_INI = VAR_RW( "G_M_INI", G_M_INI, INT_TYPE, 1 );// 11
 		// запомнить направления (логическое значение)
 		REM_DIR = VAR_RW( "REM_DIR", REM_DIR, BOOL_TYPE, false );// 12
 		// направления 13-24

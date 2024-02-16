@@ -201,17 +201,18 @@ applyButton.text = "OK";
 
 applyButton.onClick = function () {
     if (!BridgeTalk.isRunning("photoshop")) {
-        BridgeTalk.launch("photoshop"["","background"]);
+        BridgeTalk.launch("photoshop");
         BridgeTalk.bringToFront("illustrator");
         rastersparasi()
     } else {
         rastersparasi();
-        
+
     }
 }
 dialog.show();
 
 function rastersparasi() {
+    app.redraw()
     var doc = app.activeDocument;
     var usedChannel = [cyanChk.value, magentaChk.value, yellowChk.value, blackChk.value];
     var nameChannel = ["cyan", "magenta", "yellow", "black"];
@@ -259,60 +260,66 @@ function rastersparasi() {
     }
 
     app.executeMenuCommand("showAll");
+    // app.redraw();
     var scriptFile = File("C:/scripts/SablonSeparasi.jsx")
     scriptFile.open("r");
     var scriptCode = "var frequencyHalft=" + rasterfreq + ";";
     scriptCode += "var shapeHalft='" + shapeHalft.selection.text + "';";
+    scriptCode += "var usedChannel = ["+ cyanChk.value + "," + magentaChk.value + "," + yellowChk.value + "," + blackChk.value +"];";
     scriptCode += scriptFile.read();
     scriptFile.close();
     bt.target = specifier;
     bt.body = scriptCode;
     bt.onResult = function () {
+        
         while (progBar.value < progBar.maxvalue) {
             progBar.value++;
             progBarLabel.text = progBar.value + "%";
             $.sleep(10);
             dialog.update();
         }
-        for (var i = 0, len = usedChannel.length; i < len; i++) {
-            if (usedChannel[i]) {
-                var placedItem = doc.placedItems.add();
-                placedItem.file = new File("~/Desktop/" + nameChannel[i] +rasterfreq+ ".psd");
-                placedItem.blendingMode = BlendModes.MULTIPLY;
-                placedItem.embed()
-                File("~/Desktop/" + nameChannel[i] + rasterfreq + ".psd").remove();
-                switch (nameChannel[i]) {
-                    case "cyan":
-                        doc.defaultFillColor = colorCyan;
-                        break;
-                    case "magenta":
-                        doc.defaultFillColor = colorMagenta;
-                        break;
-                    case "yellow":
-                        doc.defaultFillColor = colorYellow;
-                        break;
-                    case "black":
-                        doc.defaultFillColor = colorBlack;
-                        break;
-
-                    default:
-                        break;
+        try {
+            for (var i = 0, len = usedChannel.length; i < len; i++) {
+                if (usedChannel[i]) {
+                    var placedItem = doc.placedItems.add();
+                    placedItem.file = File("~/Desktop/" + nameChannel[i] + rasterfreq + ".psd");
+                    placedItem.blendingMode = BlendModes.MULTIPLY;
+                    switch (nameChannel[i]) {
+                        case "cyan":
+                            doc.defaultFillColor = colorCyan;
+                            break;
+                        case "magenta":
+                            doc.defaultFillColor = colorMagenta;
+                            break;
+                        case "yellow":
+                            doc.defaultFillColor = colorYellow;
+                            break;
+                        case "black":
+                            doc.defaultFillColor = colorBlack;
+                            break;
+    
+                        default:
+                            break;
+                    }
+                    placedItem.embed()
+                    File("~/Desktop/" + nameChannel[i] + rasterfreq + ".psd").remove();
                 }
-
-                app.executeMenuCommand("hide");
             }
+    
+            File("~/Desktop/FiletoSplit.tif").remove();
+        } catch (error) {
+            alert(error)
         }
-
-        File("~/Desktop/FiletoSplit.tif").remove();
-        app.executeMenuCommand("showAll");
+        
+        // app.executeMenuCommand("showAll");
         // app.executeMenuCommand("group");
         dialog.close();
-        
+
     }
     bt.send(100);
     app.redraw();
     BridgeTalk.bringToFront("illustrator");
-    
+
 
 
 }

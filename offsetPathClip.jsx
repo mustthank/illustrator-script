@@ -16,7 +16,7 @@ $.getColorValues = function (color) {if (color === undefined) {return undefined;
 var doc = app.activeDocument;
 var objectsToSpec = new Array();
 var notSelected = new Array();
-var clippp = new Array();
+// var clippp = new Array();
 try {
     main();
 } catch (error) {
@@ -32,16 +32,27 @@ function main()
             doc.selection[index].selected = false;
         } else {
             objectsToSpec.push(itemMask[0]);
-            clippp.push(itemMask[0].parent);
+            // clippp.push(itemMask[0].parent);
         }
     }
     doc.selection = objectsToSpec;
     app.redraw();
-    app.executeMenuCommand("OffsetPath v23");
-    for (var index = doc.selection.length - 1; index >= 0; index--){
-        doc.selection[index].clipping = true;
-        objectsToSpec[index].remove();
-        clippp[index].clipped=true;
+    if(!doc.selection.length == 0){
+        app.executeMenuCommand("OffsetPath v23");
+        for (var index = doc.selection.length - 1; index >= 0; index--){
+            if(doc.selection[index] == objectsToSpec[index]){
+                var cancell = 1;
+            } else{
+                doc.selection[index].clipping = true
+                objectsToSpec[index].remove();
+            }
+        }
+        doc.selection=null;
+        if(cancell){
+            app.undo()
+        }
+    }else{
+        alert("No clipping mask selected!!!");
     }
-    doc.selection=null;
+   
 }

@@ -13,8 +13,11 @@ BT.body = scriptCode;
 BT.send();
 var fileRef = new File("~/Desktop/FiletoSplit.tif");
 app.open(fileRef);
-
-rastersparasi()
+try {
+    rastersparasi()
+} catch (error) {
+    alert(error)
+}
 var doc = app.documents.getByName("FiletoSplit.tif");
 function rastersparasi() {
     var jpegoptions = new JPEGSaveOptions()
@@ -28,7 +31,6 @@ function rastersparasi() {
         var savedState = docRef.activeHistoryState;
         var nameChannel = ["cyan", "magenta", "yellow", "black"]
         var myAngle = ["108", "162", "90", "45"]
-        var usedChannel = [1, 1, 1, 1]
         for (var i = 0, len = myChannel.length; i < len; i++) {
             if (usedChannel[i]) {
                  docRef.activeChannels = [myChannel[i]]
@@ -60,7 +62,6 @@ function rastersparasi() {
                     default:
                         break;
                 }
-                // bitSaveOptions.shape = BitmapHalfToneType.ROUND;
                 docRef.changeMode(ChangeMode.BITMAP, bitSaveOptions)
                 docRef.saveAs(new File(myLocation + "/" + nameChannel[i] + frequencyHalft + ".psd"), undefined, true);
                 docRef.activeHistoryState = savedState

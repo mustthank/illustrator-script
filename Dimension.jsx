@@ -320,7 +320,8 @@ if (app.documents.length > 0 && selectedItems > 0) {
 
 
     var decimalPlacesInput = g.add('edittext', [0, 0, 20, 30], '2', { readonly: true });
-    var sbar = g.add("scrollbar", [5, 5, 20, 30]);
+    var sbar = g.add("scrollbar", [5,5,20,30]);
+    // var sbar = g.add("scrollbar", [5, 5, 20, 30]);
     sbar.minvalue = -4
     sbar.maxvalue = 0
     //  ("scrollbar", [0,0,20,200], 0, 0, 60
